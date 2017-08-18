@@ -26,8 +26,8 @@
                 <i class="material-icons" ng-if="data.claimStatus===0">assignment_late</i>
             </td>
             <td data-title="Action">
-                <md-button flex ng-if="data.claimStatus===0" class="md-raised md-warn">Close Claim</md-button>
-                <md-button flex ng-if="data.claimStatus===1" class="md-raised md-primary">Reopen Claim</md-button>
+                <md-button flex ng-if="data.claimStatus===0" class="md-raised md-warn" ng-click="vm.closeClaim(data)">Close Claim</md-button>
+                <md-button flex ng-if="data.claimStatus===1" class="md-raised md-primary" ng-click="vm.reopenClaim(data)">Reopen Claim</md-button>
             </td>
          </tr>
         </tbody>
