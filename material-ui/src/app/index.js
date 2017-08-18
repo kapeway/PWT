@@ -29,7 +29,7 @@ angular.module('angularMaterialAdmin', ['ngAnimate', 'ngCookies',
       })
       .state('home.data-table', {
         url: '/data-table',
-        controller: 'DataTableController',
+        controller: 'TableController',
         controllerAs: 'vm',
         templateUrl: 'app/views/data-table.html',
         data: {

@@ -10,9 +10,10 @@ from flask_httpauth import HTTPBasicAuth
 from flask_httpauth import HTTPTokenAuth
 from werkzeug import secure_filename
 from collections import OrderedDict
-import simplejson as json
+import json
 from flask_pymongo import PyMongo
-from bson import json_util
+from bson import json_util, ObjectId
+from bson.json_util import dumps
 from datetime import time
 
 
@@ -21,7 +22,7 @@ CORS(app)
 basicauth = HTTPBasicAuth()
 tokenauth = HTTPTokenAuth('Bearer')
 
-app.config['UPLOAD_FOLDER'] = '/home/kavinfranco/PWT/api/uploads'
+app.config['UPLOAD_FOLDER'] = '/home/kavinfranco/PWT/python-flask-api/uploads'
 app.config['ALLOWED_EXTENSIONS'] = set(['xlsx', 'xls'])
 app.config['MONGO_DBNAME'] = 'pwtdb'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/pwtdb'
@@ -109,8 +110,8 @@ def upload():
             for rownum in range(1, claim_data_sheet.nrows):
                 claim = OrderedDict()
                 row_values = claim_data_sheet.row_values(rownum)
-                policy['sno'] = row_values[0]
-                policy['policyNumber'] = row_values[1]
+                claim['sno'] = row_values[0]
+                claim['policyNumber'] = row_values[1]
                 year, month, day, hour, minute, second = xlrd.xldate_as_tuple(row_values[2],policy_work_book.datemode)
                 claim['claimReportedDate'] = datetime.datetime(year, month, day, hour, minute, second)
                 claim['claimStatus'] = row_values[3]
@@ -121,6 +122,35 @@ def upload():
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], filename))
     	    return jsonify({'isfileuploaded' : True})
         return jsonify({'isfileuploaded' : False})
+
+@app.route('/api/claims', methods=['GET'])
+@tokenauth.login_required
+def get_all_claims():
+  claims = mongo.db.claimdata
+  output = []
+  for s in claims.find():
+    output.append({'_id' : s['_id'], 'sno' : s['sno'],'policyNumber' : s['policyNumber'], 'claimReportedDate' : s['claimReportedDate'],'claimStatus' : s['claimStatus'], 'policyType' : s['policyType'],'policySubType' : s['policySubType'], 'claimedAmount' : s['claimedAmount']})
+  return dumps({'result' : output})
+
+@app.route('/api/claims/close/<int:sno>', methods=['PUT'])
+@tokenauth.login_required
+def close_claims(sno):
+  print sno
+  try:
+   mongo.db.claimdata.update_one({'sno':sno},{'$set':{'claimStatus':1}})
+   return jsonify({'isClaimClosed' : True})
+  except Exception, e:
+   print str(e)
+
+@app.route('/api/claims/reopen/<int:sno>', methods=['PUT'])
+@tokenauth.login_required
+def reopen_claims(sno):
+  print sno
+  try:
+   mongo.db.claimdata.update_one({'sno':sno},{'$set':{'claimStatus':0}})
+   return jsonify({'isClaimReopened' : True})
+  except Exception, e:
+   print str(e)
 
 if __name__ == '__main__':
     app.run(debug=True)

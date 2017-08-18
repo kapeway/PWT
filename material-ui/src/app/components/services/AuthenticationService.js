@@ -8,19 +8,6 @@ angular.module('app')
         var service = {};
 
         service.Login = function (username, password, callback) {
-            /* Dummy authentication for testing, uses $timeout to simulate api call
-             ----------------------------------------------*/
-            // $timeout(function(){
-            //     var response = { success: username === 'test' && password === 'test' };
-            //     if(!response.success) {
-            //         response.message = 'Username or password is incorrect';
-            //     }
-            //     callback(response);
-            // }, 1000);
-
-
-            /* Use this for real authentication
-             ----------------------------------------------*/
             $http.get('http://127.0.0.1:5000/api/token', { headers: { 
 					   'Content-Type' : 'application/json',
 					   'Authorization' : 'Basic ' + Base64.encode(username + ':' + password),
@@ -33,11 +20,9 @@ angular.module('app')
                         callback(error);
                    console.log('token result',error);
    });
-
-        };
+};
  
         service.SetCredentials = function (username, servertoken) {
-            //var authdata = Base64.encode(username + ':' + password);
  console.log('inside setCredentials',servertoken);
             $rootScope.globals = {
                 currentUser: {
