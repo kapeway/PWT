@@ -14,7 +14,9 @@ import json
 from flask_pymongo import PyMongo
 from bson import json_util, ObjectId
 from bson.json_util import dumps
+from bson.son import SON
 from datetime import time
+import pprint
 
 
 app = Flask(__name__)
@@ -151,6 +153,99 @@ def reopen_claims(sno):
    return jsonify({'isClaimReopened' : True})
   except Exception, e:
    print str(e)
+
+@app.route('/api/premiums/weekly', methods=['GET'])
+@tokenauth.login_required
+def get_weekly_premiums():
+  Pipeline = [
+        {
+			"$project": {
+			  "year":{"$year":"$datetime"},
+			  "month":{"$month":"$datetime"},
+			  "week":{"$week":"$datetime"},
+			  "policyType":"$policyType",
+			  "premium":"$premium"
+			}
+		},
+		{
+			"$group": {
+			  "_id":{
+			"policyType":"$policyType",
+			"year":"$year",
+			"month":"$month",
+			"week":"$week",
+			  },
+			"premium":{"$sum":"$premium"}
+			}
+		},
+		{
+			"$sort": {
+			"_id.policyType":1,
+			"_id.year":1,
+			"_id.month":1,
+			"_id.week":1
+			}
+		},
+		{
+			"$group": {
+			  "_id":{"policyType":"$_id.policyType"},
+			  "premiumForDuration":{"$push":{"year":"$_id.year","month":"$_id.month","week":"$_id.week","premium":"$premium"}}
+			}
+		},
+		{
+			"$project": {
+			"policyType":"$_id.policyType",
+			"premiumForDuration":"$premiumForDuration"
+			}
+		},
+	]
+  premium = list(mongo.db.policydata.aggregate(Pipeline))
+  return dumps({'result' : premium})
+
+@app.route('/api/premiums/monthly', methods=['GET'])
+@tokenauth.login_required
+def get_monthly_premiums():
+  Pipeline = [
+        {
+			"$project": {
+			  "year":{"$year":"$datetime"},
+			  "month":{"$month":"$datetime"},
+			  "policyType":"$policyType",
+			  "premium":"$premium"
+			}
+		},
+		{
+			"$group": {
+			  "_id":{
+			"policyType":"$policyType",
+			"year":"$year",
+			"month":"$month",
+			  },
+			"premium":{"$sum":"$premium"}
+			}
+		},
+		{
+			"$sort": {
+			"_id.policyType":1,
+			"_id.year":1,
+			"_id.month":1
+			}
+		},
+		{
+			"$group": {
+			  "_id":{"policyType":"$_id.policyType"},
+			  "premiumForDuration":{"$push":{"year":"$_id.year","month":"$_id.month","premium":"$premium"}}
+			}
+		},
+		{
+			"$project": {
+			"policyType":"$_id.policyType",
+			"premiumForDuration":"$premiumForDuration"
+			}
+		},
+	]
+  premium = list(mongo.db.policydata.aggregate(Pipeline))
+  return dumps({'result' : premium})
 
 if __name__ == '__main__':
     app.run(debug=True)
