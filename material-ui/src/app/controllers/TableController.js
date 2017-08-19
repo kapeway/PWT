@@ -3,11 +3,11 @@
   angular
     .module('app')
     .controller('TableController', [
-      'tableService','simpleToast',
+      'claimService','simpleToast',
       TableController
     ]);
 
-  function TableController(tableService,simpleToast) {
+  function TableController(claimService,simpleToast) {
     var vm = this;
 
     vm.tableData = [];
@@ -17,7 +17,7 @@
     };
 
     vm.closeClaim=function(claimToClose){
-    tableService.closeClaim(claimToClose.sno,function(response) {
+    claimService.closeClaim(claimToClose.sno,function(response) {
         if(response.status===200) {
           console.log(response);
           claimToClose.claimStatus=1;
@@ -26,7 +26,7 @@
     };
 
     vm.reopenClaim=function(claimToReopen){
-      tableService.reopenClaim(claimToReopen.sno,function(response) {
+      claimService.reopenClaim(claimToReopen.sno,function(response) {
           if(response.status===200) {
             console.log(response);
             claimToReopen.claimStatus=0;
@@ -34,7 +34,7 @@
       });
     };
 
-    tableService.getClaims(function(response) {
+    claimService.getClaims(function(response) {
         if(response.status===200) {
           console.log(response);
           vm.tableData=response.data.result;

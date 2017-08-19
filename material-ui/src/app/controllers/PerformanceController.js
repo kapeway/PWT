@@ -2,32 +2,45 @@
     angular
         .module('app')
         .controller('PerformanceController', [
-            'performanceService', '$q',
+            'premiumService', '$q',
             PerformanceController
         ]);
 
-    function PerformanceController(performanceService, $q) {
+    function PerformanceController(premiumService, $q) {
         var vm = this;
-
-        vm.chartOptions = {
-            chart: {
-                type: 'stackedAreaChart',
-                height: 350,
-                margin: { left: -15, right: -15 },
-                x: function (d) { return d[0] },
-                y: function (d) { return d[1] },
+        var monthNumber = ["Jan", "Feb", "Mar","Apr","May","Jun","Jul","Aug","Sept","Oct","Nov","Dec"];
+        vm.showOptions=false;
+        var getChartOptions =function(chartPremiumData) {
+            var getChartToolTip=function(d){
+                if(d.week)
+                  return "Premium for " + monthNumber[d.month-1] +" " + d.year + " " + d.week + " week";
+                return "Premium for " + monthNumber[d.month-1] +" " + d.year;
+            };
+            return {chart: {
+                type: 'pieChart',
+                height: 300,
+                donut: true,
+                x: function (d) { return getChartToolTip(d) ; },
+                y: function (d) { return d.premium; },
+                valueFormat: (d3.format(".0f")),
+                color: ['#F44336', '#E91E63','#9c27B0','#3F51B5','#00BCD4','#4CAF50','#FFEB3B','#795548','#9E9E9E'],
                 showLabels: false,
                 showLegend: false,
-                title: 'Over 9K',
-                showYAxis: false,
-                showXAxis: false,
-                color: ['rgb(0, 150, 136)', 'rgb(204, 203, 203)', 'rgb(149, 149, 149)', 'rgb(44, 44, 44)'],
-                tooltip: { contentGenerator: function (d) { return '<div class="custom-tooltip">' + d.point.y + '%</div>' + '<div class="custom-tooltip">' + d.series[0].key + '</div>' } },
-                showControls: false
+                title: chartPremiumData.policyType,
+                margin: { top: -10 }
+                }
             }
         };
+        
+        var setIndividualPremiumCharts=function(premiumDataResult){
+            vm.motorPremiumChartData = premiumDataResult[0];
+            vm.motorPremiumChartOption = getChartOptions(premiumDataResult[0]);
+            vm.lifePremiumChartData = premiumDataResult[1];
+            vm.lifePremiumChartOption = getChartOptions(premiumDataResult[1]);
+            vm.healthPremiumChartData = premiumDataResult[2];
+            vm.healthPremiumChartOption = getChartOptions(premiumDataResult[2]);
+        };
 
-        vm.performanceChartData = [];
         vm.performancePeriod = 'week';
         vm.changePeriod = changePeriod;
 
@@ -38,9 +51,23 @@
             $q.all(queries);
         }
 
-
         function loadData() {
-            vm.performanceChartData = performanceService.getPerformanceData(vm.performancePeriod);
+            if(vm.performancePeriod==='week'){
+                premiumService.getWeeklyPremium(function(response) {
+                if(response.status===200) {
+                    console.log(response);
+                    setIndividualPremiumCharts(response.data.result);
+                    }
+                });
+            }
+            else{
+                premiumService.getMonthlyPremium(function(response) {
+                if(response.status===200) {
+                    console.log(response);
+                    setIndividualPremiumCharts(response.data.result);
+                    }
+                });
+            }
         }
 
         function changePeriod() {

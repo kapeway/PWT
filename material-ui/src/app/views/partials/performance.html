@@ -1,12 +1,12 @@
-<div ng-controller="PerformanceController as vm">
-  <md-content ng-show="$showOptions" class="options">
+<div ng-controller="PerformanceController as vm">  <md-content ng-show="$showOptions" class="options">
     <md-radio-group ng-model="vm.performancePeriod" ng-change="vm.changePeriod()">
       <md-radio-button  value="week">Weekly</md-radio-button>
       <md-radio-button  value="month">Monthly</md-radio-button>
     </md-radio-group>
   </md-content>
-
-  <md-content class="md-padding">
-    <nvd3 options="vm.chartOptions" data="vm.performanceChartData"></nvd3>
-  </md-content>
+   <div layout="row">
+      <nvd3 flex options="vm.motorPremiumChartOption" data="vm.motorPremiumChartData.premiumForDuration"></nvd3>
+      <nvd3 flex options="vm.lifePremiumChartOption" data="vm.lifePremiumChartData.premiumForDuration"></nvd3>
+      <nvd3 flex options="vm.healthPremiumChartOption" data="vm.healthPremiumChartData.premiumForDuration"></nvd3>
+  </div>   
 </div>

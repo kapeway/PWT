@@ -3,8 +3,8 @@
 angular.module('app')
  
 .factory('AuthenticationService',
-    ['Base64', '$http', '$cookieStore', '$rootScope', '$timeout',
-    function (Base64, $http, $cookieStore, $rootScope, $timeout) {
+    ['Base64', '$http', '$cookieStore', '$rootScope',
+    function (Base64, $http, $cookieStore, $rootScope) {
         var service = {};
 
         service.Login = function (username, password, callback) {
@@ -15,15 +15,12 @@ angular.module('app')
                     } })
                     .then(function (response){
                         callback(response);
-                   console.log('token result',response);
                     },function (error){
                         callback(error);
-                   console.log('token result',error);
    });
 };
  
         service.SetCredentials = function (username, servertoken) {
- console.log('inside setCredentials',servertoken);
             $rootScope.globals = {
                 currentUser: {
                     username: username,

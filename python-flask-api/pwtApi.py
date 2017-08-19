@@ -247,5 +247,15 @@ def get_monthly_premiums():
   premium = list(mongo.db.policydata.aggregate(Pipeline))
   return dumps({'result' : premium})
 
+@app.route('/api/policy', methods=['GET'])
+@tokenauth.login_required
+def get_all_policy():
+  policy = mongo.db.policydata
+  output = []
+  for s in policy.find():
+    output.append({'_id' : s['_id'], 'datetime' : s['datetime'],'policyType' : s['policyType'],'policyNumber' : s['policyNumber'], 'policySubType' : s['policySubType'],'policyHolderName' : s['policyHolderName'], 'insurerName' : s['insurerName'],'sumInsured' : s['sumInsured'], 'premium' : s['premium'], 'commisions' : s['commisions'], 'ncb' : s['ncb'], 'nominee' : s['nominee'], 'dependents' : s['dependents'], 'claimMade' : s['claimMade'], 'customerEmail' : s['customerEmail']})
+  return dumps({'result' : output})
+
+
 if __name__ == '__main__':
     app.run(debug=True)

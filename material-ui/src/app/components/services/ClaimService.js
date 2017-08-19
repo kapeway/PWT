@@ -2,7 +2,7 @@
  
 angular.module('app')
  
-.service('tableService', ['$http', function ($http) {
+.service('claimService', ['$http', function ($http) {
     this.getClaims = function(callback){
         $http.get('http://127.0.0.1:5000/api/claims')
     .then(function (response){
