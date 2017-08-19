@@ -26,7 +26,7 @@
     }
 
     function toggleItemsList() {
-      var pending = $mdBottomSheet.hide() || $q.when(true);
+      var pending = $q.when(true);
 
       pending.then(function(){
         $mdSidenav('left').toggle();
