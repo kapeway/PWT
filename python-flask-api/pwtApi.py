@@ -17,9 +17,13 @@ from bson.json_util import dumps
 from bson.son import SON
 from datetime import time
 import pprint
+from flask_mail import Mail
+from flask_mail import Message
+
 
 
 app = Flask(__name__)
+mail = Mail(app)
 CORS(app)
 basicauth = HTTPBasicAuth()
 tokenauth = HTTPTokenAuth('Bearer')
@@ -28,6 +32,13 @@ app.config['UPLOAD_FOLDER'] = '/home/kavinfranco/PWT/python-flask-api/uploads'
 app.config['ALLOWED_EXTENSIONS'] = set(['xlsx', 'xls'])
 app.config['MONGO_DBNAME'] = 'pwtdb'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/pwtdb'
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'kavin.franco@gmail.com'
+app.config['MAIL_PASSWORD'] = 'Kapeway7!'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail = Mail(app)
 
 mongo = PyMongo(app)
 
@@ -138,8 +149,43 @@ def get_all_claims():
 @tokenauth.login_required
 def close_claims(sno):
   print sno
+  Pipeline = [
+      {
+    "$match": {
+      "sno":sno
+    }
+  },
+  {
+    "$lookup": {
+    "from" : "policydata",
+    "localField" : "policyNumber",
+    "foreignField" : "policyNumber",
+    "as" : "policyDataMatch"
+    }
+  },
+  {
+    "$project": {
+    "policyDataMatchForSno":{"$arrayElemAt": [ "$policyDataMatch", 0 ]}
+    }
+  },
+  {
+    "$project": {
+    "customerEmail":"$policyDataMatchForSno.customerEmail"
+    }
+  },
+]
+
   try:
+   customeremailaggregationresult = list(mongo.db.claimdata.aggregate(Pipeline))
+   customeremailcollection = customeremailaggregationresult[0]
+   print customeremailcollection['customerEmail']
+   customeremail = customeremailcollection['customerEmail']
+   msg = Message("Claim has been closed!",
+                  sender="kavin.franco@gmail.com",
+                  recipients=[customeremail]) 
+   msg.body = "your claim has been closed in PWT"
    mongo.db.claimdata.update_one({'sno':sno},{'$set':{'claimStatus':1}})
+   mail.send(msg)
    return jsonify({'isClaimClosed' : True})
   except Exception, e:
    print str(e)
