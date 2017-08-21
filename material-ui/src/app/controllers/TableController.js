@@ -3,11 +3,11 @@
   angular
     .module('app')
     .controller('TableController', [
-      'claimService','simpleToast',
+      'claimService',
       TableController
     ]);
 
-  function TableController(claimService,simpleToast) {
+  function TableController(claimService) {
     var vm = this;
 
     vm.tableData = [];

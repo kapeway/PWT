@@ -1,0 +1,66 @@
+<div ng-controller="PolicyController as vm" class="table-responsive-vertical md-whiteframe-z1">
+    <table id="table" class="table table-hover table-bordered">
+        <thead>
+        <tr>
+            <th>#</th>
+             <th>Policy Type</th> 
+            <th>Policy No</th>
+            <th>Sum Insured</th>
+            <th>Premium</th>
+            <th>Commisions</th>
+            <th>Ncb</th>
+            <th>Claim Made</th>
+            <th>More</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat-start="data in vm.tableData track by $index">
+            <td data-title="ID">{{$index+1}}</td>
+            <td data-title="PolicyType">{{data.policyType}}</td> 
+            <td data-title="PolicyNo">{{data.policyNumber}}</td>
+            <td data-title="SumInsured">{{data.sumInsured}}</td>
+            <td data-title="Premium">{{data.premium}}</td>
+            <td data-title="Commisions">{{data.commisions}}</td>
+            <td data-title="NCb">{{data.ncb}}</td>
+            <td data-title="ClaimMade">
+                <i class="material-icons" ng-if="data.claimMade==='y'">thumb_up</i>
+                <i class="material-icons" ng-if="data.claimMade==='n'">thumb_down</i>
+            </td>
+            <td data-title="More">
+                <i class="material-icons" ng-show="!data.expanded" ng-click="data.expanded=true">chevron_right</i>
+                <i class="material-icons" ng-show="data.expanded" ng-click="data.expanded=false">expand_more</i>
+            </td>
+         </tr>
+        <tr ng-show="data.expanded" ng-repeat-end="">
+            <td colspan="100%">
+                <div class="table-responsive-vertical md-whiteframe-z1">
+                <table id="table" class="table table-hover table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Date Time</th>
+                        <th>Policy Sub Type</th>
+                        <th>Policy Holder Name</th>
+                        <th>Insurer Name</th>
+                        <th>Nominee</th>
+                        <th>Dependents</th>
+                        <th>Customer Email</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td data-title="Datetime" data-ng-bind="vm.getDate(data.datetime.$date)"></td> 
+                        <td data-title="PolicySubType">{{data.policySubType}}</td>
+                        <td data-title="PolicyHolderName">{{data.policyHolderName}}</td>
+                        <td data-title="InsurerName">{{data.insurerName}}</td> 
+                        <td data-title="Nominee">{{data.nominee}}</td>
+                        <td data-title="Dependents">{{data.dependents}}</td> 
+                        <td data-title="CustomerEmail">{{data.customerEmail}}</td>  
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
