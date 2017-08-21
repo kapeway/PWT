@@ -9,7 +9,6 @@
 
   function PolicyController(policyService) {
     var vm = this;
-
     vm.tableData = [];
 
     vm.getDate=function(nanoSeconds){

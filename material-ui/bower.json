@@ -16,6 +16,7 @@
     "angular-material": "^1.0.6",
     "angular-mocks": "^1.5.0",
     "angular-material-data-table": "^0.10.10",
-    "moment":"^2.18.1"
+    "moment":"^2.18.1",
+    "ng-json-export-excel":"^1.0.0"
   },  "devDependencies": {}
 }

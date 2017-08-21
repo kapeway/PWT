@@ -253,7 +253,7 @@ def get_all_policy():
   policy = mongo.db.policydata
   output = []
   for s in policy.find():
-    output.append({'_id' : s['_id'], 'datetime' : s['datetime'],'policyType' : s['policyType'],'policyNumber' : s['policyNumber'], 'policySubType' : s['policySubType'],'policyHolderName' : s['policyHolderName'], 'insurerName' : s['insurerName'],'sumInsured' : s['sumInsured'], 'premium' : s['premium'], 'commisions' : s['commisions'], 'ncb' : s['ncb'], 'nominee' : s['nominee'], 'dependents' : s['dependents'], 'claimMade' : s['claimMade'], 'customerEmail' : s['customerEmail']})
+    output.append({'_id' : s['_id'], 'datetime' : s['datetime'], 'datetimestring':s['datetime'].strftime("%Y-%m-%d %H:%M:%S"),'policyType' : s['policyType'],'policyNumber' : s['policyNumber'], 'policySubType' : s['policySubType'],'policyHolderName' : s['policyHolderName'], 'insurerName' : s['insurerName'],'sumInsured' : s['sumInsured'], 'premium' : s['premium'], 'commisions' : s['commisions'], 'ncb' : s['ncb'], 'nominee' : s['nominee'], 'dependents' : s['dependents'], 'claimMade' : s['claimMade'], 'customerEmail' : s['customerEmail']})
   return dumps({'result' : output})
 
 
