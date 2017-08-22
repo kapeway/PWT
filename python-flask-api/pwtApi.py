@@ -165,12 +165,14 @@ def close_claims(sno):
   },
   {
     "$project": {
-    "policyDataMatchForSno":{"$arrayElemAt": [ "$policyDataMatch", 0 ]}
+    "policyDataMatchForSno":{"$arrayElemAt": [ "$policyDataMatch", 0 ]},
+    "policyNumber":"$policyNumber"
     }
   },
   {
     "$project": {
-    "customerEmail":"$policyDataMatchForSno.customerEmail"
+    "customerEmail":"$policyDataMatchForSno.customerEmail",
+    "policyNumber":"$policyNumber"
     }
   },
 ]
@@ -180,10 +182,11 @@ def close_claims(sno):
    customeremailcollection = customeremailaggregationresult[0]
    print customeremailcollection['customerEmail']
    customeremail = customeremailcollection['customerEmail']
+   policynumber = customeremailcollection['policyNumber']
    msg = Message("Claim has been closed!",
                   sender="kavin.franco@gmail.com",
                   recipients=[customeremail,"kavinfranco19@gmail.com"]) 
-   msg.body = "your claim has been closed in PWT"
+   msg.body ="Your claim on policy# "+policynumber+ " has been closed in PWT"
    mongo.db.claimdata.update_one({'sno':sno},{'$set':{'claimStatus':1}})
    mail.send(msg)
    return jsonify({'isClaimClosed' : True})
