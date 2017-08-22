@@ -1,6 +1,7 @@
 <div ng-controller="PolicyController as vm" class="table-responsive-vertical md-whiteframe-z1">
     <button ng-disabled="vm.tableData.length < 1" ng-json-export-excel data="vm.tableData" report-fields="{'datetimestring': 'datetime',policyType: 'policyType',policyNumber: 'policyNumber',policySubType: 'policySubType',policyHolderName:'policyHolderName',insurerName:'insurerName',sumInsured:'sumInsured',premium:'premium',commisions:'commisions',ncb:'ncb',nominee:'nominee',dependents:'dependents',claimMade:'claimMade',customerEmail:'customerEmail'}" filename="'data_dump'" class="btn-sm btn-primary">Export Excel</button>
-    <table id="table" class="table table-hover table-bordered">
+    <md-progress-linear ng-if="vm.dataLoading" md-mode="query"></md-progress-linear>
+    <table ng-if="!vm.dataLoading" id="table" class="table table-hover table-bordered">
         <thead>
         <tr>
             <th>#</th>

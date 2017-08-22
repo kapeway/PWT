@@ -6,13 +6,14 @@
     </md-radio-group>
   </md-content>
   <md-content layout-gt-md="row" layout-align="center center">
-    <div layout="column" flex-gt-sm="66">
+    <md-progress-circular ng-if="vm.dataLoading" md-mode="indeterminate"></md-progress-circular>
+    <div ng-if="!vm.dataLoading" layout="column" flex-gt-sm="66">
       <nvd3 flex options="vm.motorPremiumChartOption" data="vm.motorPremiumChartData.premiumForDuration"></nvd3>
     </div>
-    <div layout="column" flex-gt-sm="66">
+    <div ng-if="!vm.dataLoading" layout="column" flex-gt-sm="66">
       <nvd3 flex options="vm.lifePremiumChartOption" data="vm.lifePremiumChartData.premiumForDuration"></nvd3>
     </div>
-    <div layout="column" flex-gt-sm="66">
+    <div ng-if="!vm.dataLoading" layout="column" flex-gt-sm="66">
       <nvd3 flex options="vm.healthPremiumChartOption" data="vm.healthPremiumChartData.premiumForDuration"></nvd3>
     </div>
 </md-content>

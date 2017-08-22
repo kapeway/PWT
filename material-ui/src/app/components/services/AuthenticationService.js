@@ -7,18 +7,13 @@ angular.module('app')
     function (Base64, $http, $cookieStore, $rootScope) {
         var service = {};
 
-        service.Login = function (username, password, callback) {
-            $http.get('http://127.0.0.1:5000/api/token', { headers: { 
-					   'Content-Type' : 'application/json',
-					   'Authorization' : 'Basic ' + Base64.encode(username + ':' + password),
-					   'Access-Control-Allow-Origin': '*'
-                    } })
-                    .then(function (response){
-                        callback(response);
-                    },function (error){
-                        callback(error);
-   });
-};
+        service.Login = function (username, password) {
+            return $http.get('http://127.0.0.1:5000/api/token', { headers: { 
+                        'Content-Type' : 'application/json',
+                        'Authorization' : 'Basic ' + Base64.encode(username + ':' + password),
+                        'Access-Control-Allow-Origin': '*'
+                    } });
+        };
  
         service.SetCredentials = function (username, servertoken) {
             $rootScope.globals = {

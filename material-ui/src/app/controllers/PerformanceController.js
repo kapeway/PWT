@@ -53,19 +53,21 @@
 
         function loadData() {
             if(vm.performancePeriod==='week'){
-                premiumService.getWeeklyPremium(function(response) {
-                if(response.status===200) {
-                    console.log(response);
+                vm.dataLoading=true;
+                var promise = premiumService.getWeeklyPremium();
+                promise.then(
+                function(response) { 
+                    vm.dataLoading=false;
                     setIndividualPremiumCharts(response.data.result);
-                    }
                 });
             }
             else{
-                premiumService.getMonthlyPremium(function(response) {
-                if(response.status===200) {
-                    console.log(response);
+                vm.dataLoading=true;
+                var promise = premiumService.getMonthlyPremium();
+                promise.then(
+                function(response) { 
+                    vm.dataLoading=false;
                     setIndividualPremiumCharts(response.data.result);
-                    }
                 });
             }
         }

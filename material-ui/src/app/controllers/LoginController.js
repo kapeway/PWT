@@ -8,14 +8,15 @@ angular.module('app')
  
         $scope.login = function () {
             $scope.dataLoading = true;
-            var authToken=AuthenticationService.Login($scope.username, $scope.password, function(response) {
-                if(response.status===200) {
-                    AuthenticationService.SetCredentials($scope.username, response.data.token);
-                    $location.path('/');
-                } else {
-                    $scope.error = response.data;
-                    $scope.dataLoading = false;
-                }
+            var promise=AuthenticationService.Login($scope.username, $scope.password);
+            promise.then(
+            function(response) { 
+                AuthenticationService.SetCredentials($scope.username, response.data.token);
+                $location.path('/');
+            },
+            function(response) {
+                $scope.error = response.data;
+                $scope.dataLoading = false;
             });
         };
     }]);

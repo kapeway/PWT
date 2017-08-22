@@ -15,12 +15,13 @@
       return moment(new Date(nanoSeconds)).format("DD-MMM-YYYY HH:mm");
     };
 
-    policyService.getPolicy(function(response) {
-        if(response.status===200) {
-          console.log(response);
+    vm.dataLoading=true;
+    var promise = policyService.getPolicy();
+    promise.then(
+      function(response) { 
+          vm.dataLoading=false;
           vm.tableData=response.data.result;
-        }
-    });
+      });
   }
 
 })();

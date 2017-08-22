@@ -17,29 +17,26 @@
     };
 
     vm.closeClaim=function(claimToClose){
-    claimService.closeClaim(claimToClose.sno,function(response) {
-        if(response.status===200) {
-          console.log(response);
+    vm.isClaimBeingClosed=true;  
+    claimService.closeClaim(claimToClose.sno).then(
+      function(response) {
+          vm.isClaimBeingClosed=false;         
           claimToClose.claimStatus=1;
-        }
-    });
-    };
-
-    vm.reopenClaim=function(claimToReopen){
-      claimService.reopenClaim(claimToReopen.sno,function(response) {
-          if(response.status===200) {
-            console.log(response);
-            claimToReopen.claimStatus=0;
-          }
       });
     };
 
-    claimService.getClaims(function(response) {
-        if(response.status===200) {
-          console.log(response);
+    vm.reopenClaim=function(claimToReopen){
+      claimService.reopenClaim(claimToReopen.sno).then(
+      function(response) { 
+          claimToReopen.claimStatus=0;
+      });
+    };
+    vm.dataLoading=true;
+    claimService.getClaims().then(
+      function(response) { 
+          vm.dataLoading=false;
           vm.tableData=response.data.result;
-        }
-    });
+      });
   }
 
 })();

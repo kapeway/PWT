@@ -1,4 +1,5 @@
 <div ng-controller = "UploadController">
     <input type = "file" file-model = "myFile"/>
     <button ng-click = "uploadFile()">Import</button>
+    <md-progress-circular ng-if="dataLoading" md-mode="indeterminate"></md-progress-circular>
 </div>
