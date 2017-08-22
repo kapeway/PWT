@@ -32,12 +32,12 @@ app.config['UPLOAD_FOLDER'] = '/home/kavinfranco/PWT/python-flask-api/uploads'
 app.config['ALLOWED_EXTENSIONS'] = set(['xlsx', 'xls'])
 app.config['MONGO_DBNAME'] = 'pwtdb'
 app.config['MONGO_URI'] = 'mongodb://localhost:27017/pwtdb'
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USERNAME'] = 'kavin.franco@gmail.com'
-app.config['MAIL_PASSWORD'] = 'Kapeway7!'
+app.config['MAIL_SERVER'] = 'smtp.sendgrid.net'
+app.config['MAIL_PORT'] = 25
+app.config['MAIL_USERNAME'] = 'kapeway'
+app.config['MAIL_PASSWORD'] = ''
 app.config['MAIL_USE_TLS'] = False
-app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
 
 mongo = PyMongo(app)
@@ -182,7 +182,7 @@ def close_claims(sno):
    customeremail = customeremailcollection['customerEmail']
    msg = Message("Claim has been closed!",
                   sender="kavin.franco@gmail.com",
-                  recipients=[customeremail]) 
+                  recipients=[customeremail,"kavinfranco19@gmail.com"]) 
    msg.body = "your claim has been closed in PWT"
    mongo.db.claimdata.update_one({'sno':sno},{'$set':{'claimStatus':1}})
    mail.send(msg)
