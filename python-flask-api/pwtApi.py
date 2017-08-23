@@ -21,8 +21,6 @@ import pprint
 from flask_mail import Mail
 from flask_mail import Message
 
-
-
 app = Flask(__name__)
 mail = Mail(app)
 CORS(app)
@@ -36,7 +34,7 @@ app.config['MONGO_URI'] = 'mongodb://localhost:27017/pwtdb'
 app.config['MAIL_SERVER'] = 'smtp.sendgrid.net'
 app.config['MAIL_PORT'] = 25
 app.config['MAIL_USERNAME'] = 'kapeway'
-app.config['MAIL_PASSWORD'] = ''
+app.config['MAIL_PASSWORD'] = 'asdQWE123'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = False
 mail = Mail(app)
