@@ -174,24 +174,21 @@ def close_claims(sno):
     "customerEmail":"$policyDataMatchForSno.customerEmail",
     "policyNumber":"$policyNumber"
     }
-  },
-]
-
-  try:
-   customeremailaggregationresult = list(mongo.db.claimdata.aggregate(Pipeline))
-   customeremailcollection = customeremailaggregationresult[0]
-   print customeremailcollection['customerEmail']
-   customeremail = customeremailcollection['customerEmail']
-   policynumber = customeremailcollection['policyNumber']
-   msg = Message("Claim has been closed!",
-                  sender="kavin.franco@gmail.com",
-                  recipients=[customeremail,"kavinfranco19@gmail.com"]) 
-   msg.body ="Your claim on policy# "+policynumber+ " has been closed in PWT"
-   mongo.db.claimdata.update_one({'sno':sno},{'$set':{'claimStatus':1}})
-   mail.send(msg)
-   return jsonify({'isClaimClosed' : True})
-  except Exception, e:
-   print str(e)
+  }
+  ]
+  customeremailaggregationresult = list(mongo.db.claimdata.aggregate(Pipeline))
+  customeremailcollection = customeremailaggregationresult[0]
+  print customeremailcollection['customerEmail']
+  customeremail = customeremailcollection['customerEmail']
+  policynumber = customeremailcollection['policyNumber']
+  msg = Message("Claim has been closed!",
+                sender="kavin.franco@gmail.com",
+                recipients=[customeremail,"kavinfranco19@gmail.com"]) 
+                #recipients=["kavinfranco19@gmail.com"]) 
+  msg.body ="Your claim on policy# "+policynumber+ " has been closed in PWT"
+  mongo.db.claimdata.update_one({'sno':sno},{'$set':{'claimStatus':1}})
+  mail.send(msg)
+  return jsonify({'isClaimClosed' : True})
 
 @app.route('/api/claims/reopen/<int:sno>', methods=['PUT'])
 @tokenauth.login_required
@@ -307,4 +304,4 @@ def get_all_policy():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True,threaded=True)
