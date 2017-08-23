@@ -2,6 +2,7 @@
 import os
 import xlrd
 import datetime
+import aggregationHelper
 from flask import Flask, g, redirect, url_for, flash
 from flask_cors import CORS, cross_origin
 from flask import jsonify
@@ -148,34 +149,7 @@ def get_all_claims():
 @app.route('/api/claims/close/<int:sno>', methods=['PUT'])
 @tokenauth.login_required
 def close_claims(sno):
-  print sno
-  Pipeline = [
-      {
-    "$match": {
-      "sno":sno
-    }
-  },
-  {
-    "$lookup": {
-    "from" : "policydata",
-    "localField" : "policyNumber",
-    "foreignField" : "policyNumber",
-    "as" : "policyDataMatch"
-    }
-  },
-  {
-    "$project": {
-    "policyDataMatchForSno":{"$arrayElemAt": [ "$policyDataMatch", 0 ]},
-    "policyNumber":"$policyNumber"
-    }
-  },
-  {
-    "$project": {
-    "customerEmail":"$policyDataMatchForSno.customerEmail",
-    "policyNumber":"$policyNumber"
-    }
-  }
-  ]
+  Pipeline = aggregationHelper.get_policy_for_claim_no(sno)
   customeremailaggregationresult = list(mongo.db.claimdata.aggregate(Pipeline))
   customeremailcollection = customeremailaggregationresult[0]
   print customeremailcollection['customerEmail']
@@ -203,93 +177,14 @@ def reopen_claims(sno):
 @app.route('/api/premiums/weekly', methods=['GET'])
 @tokenauth.login_required
 def get_weekly_premiums():
-  Pipeline = [
-        {
-			"$project": {
-			  "year":{"$year":"$datetime"},
-			  "month":{"$month":"$datetime"},
-			  "week":{"$week":"$datetime"},
-			  "policyType":"$policyType",
-			  "premium":"$premium"
-			}
-		},
-		{
-			"$group": {
-			  "_id":{
-			"policyType":"$policyType",
-			"year":"$year",
-			"month":"$month",
-			"week":"$week",
-			  },
-			"premium":{"$sum":"$premium"}
-			}
-		},
-		{
-			"$sort": {
-			"_id.policyType":1,
-			"_id.year":1,
-			"_id.month":1,
-			"_id.week":1
-			}
-		},
-		{
-			"$group": {
-			  "_id":{"policyType":"$_id.policyType"},
-			  "premiumForDuration":{"$push":{"year":"$_id.year","month":"$_id.month","week":"$_id.week","premium":"$premium"}}
-			}
-		},
-		{
-			"$project": {
-			"policyType":"$_id.policyType",
-			"premiumForDuration":"$premiumForDuration"
-			}
-		},
-	]
+  Pipeline = aggregationHelper.get_weekly_premium()
   premium = list(mongo.db.policydata.aggregate(Pipeline))
   return dumps({'result' : premium})
 
 @app.route('/api/premiums/monthly', methods=['GET'])
 @tokenauth.login_required
 def get_monthly_premiums():
-  Pipeline = [
-        {
-			"$project": {
-			  "year":{"$year":"$datetime"},
-			  "month":{"$month":"$datetime"},
-			  "policyType":"$policyType",
-			  "premium":"$premium"
-			}
-		},
-		{
-			"$group": {
-			  "_id":{
-			"policyType":"$policyType",
-			"year":"$year",
-			"month":"$month",
-			  },
-			"premium":{"$sum":"$premium"}
-			}
-		},
-		{
-			"$sort": {
-			"_id.policyType":1,
-			"_id.year":1,
-			"_id.month":1
-			}
-		},
-		{
-			"$group": {
-			  "_id":{"policyType":"$_id.policyType"},
-			  "premiumForDuration":{"$push":{"year":"$_id.year","month":"$_id.month","premium":"$premium"}}
-			}
-		},
-		{
-			"$project": {
-			"policyType":"$_id.policyType",
-			"premiumForDuration":"$premiumForDuration"
-			}
-		},
-	]
+  Pipeline = aggregationHelper.get_monthly_premium()
   premium = list(mongo.db.policydata.aggregate(Pipeline))
   return dumps({'result' : premium})
 
