@@ -27,9 +27,9 @@
                 <i class="material-icons" ng-if="data.claimStatus===0">assignment_late</i>
             </td>
             <td data-title="Action">
-                <md-progress-linear ng-show="vm.isClaimBeingClosed" md-mode="query"></md-progress-linear>
-                <md-button flex ng-if="data.claimStatus===0" class="md-raised md-warn" ng-click="vm.closeClaim(data)">Close Claim</md-button>
-                <md-button flex ng-if="data.claimStatus===1" class="md-raised md-primary" ng-click="vm.reopenClaim(data)">Reopen Claim</md-button>
+                <md-progress-linear ng-show="vm.isClaimBeingProcessed(data)" md-mode="query"></md-progress-linear>
+                <md-button flex ng-disabled="!vm.isClaimBeingProcessed(data) && vm.isProcessRunnning" ng-if="data.claimStatus===0" class="md-raised md-warn" ng-click="vm.closeClaim(data)">Close Claim</md-button>
+                <md-button flex ng-disabled="!vm.isClaimBeingProcessed(data) && vm.isProcessRunnning" ng-if="data.claimStatus===1" class="md-raised md-primary" ng-click="vm.reopenClaim(data)">Reopen Claim</md-button>
             </td>
          </tr>
         </tbody>
