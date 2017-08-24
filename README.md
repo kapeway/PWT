@@ -22,3 +22,10 @@ Premium Weekly
 
 Premium Monthly
 [![premium-monthly](https://github.com/kapeway/PWT/blob/master/screenshot/premium-monthly-view.jpg)](#premium-monthly)
+
+Policy Data
+[![policy-data](https://github.com/kapeway/PWT/blob/master/screenshot/policy-data.jpg)](#policy-data)
+
+Claim Data
+[![claim-data](https://github.com/kapeway/PWT/blob/master/screenshot/claim-data.jpg)](#claim-data)
+
