@@ -13,3 +13,5 @@ The app has 2 components an angular js based UI https://github.com/kapeway/PWT/t
 The UI can be started by running GULP task serve using the command "gulp serve"
 
 The API can be started by running command "python pwtApi.py"
+
+[![Login](https://github.com/kapeway/PWT/blob/master/screenshot/login.jpg)](#Login)
