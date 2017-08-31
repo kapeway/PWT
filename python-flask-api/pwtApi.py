@@ -71,7 +71,6 @@ def verify_token(token):
     return False
     
 @app.route('/api/version', methods=['GET'])
-@tokenauth.login_required
 def get_version():
   return jsonify({'result' : 'v1'})
 
