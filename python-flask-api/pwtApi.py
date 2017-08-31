@@ -26,11 +26,19 @@ mail = Mail(app)
 CORS(app)
 basicauth = HTTPBasicAuth()
 tokenauth = HTTPTokenAuth('Bearer')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+port = int(os.getenv("PORT"))
 
-app.config['UPLOAD_FOLDER'] = '/home/kavinfranco/PWT/python-flask-api/uploads'
+if 'VCAP_SERVICES' in os.environ:
+    services = json.loads(os.getenv('VCAP_SERVICES'))
+    mongodb_uri = services['mlab'][0]['credentials']['uri']
+else:
+    mongodb_uri = 'mongodb://localhost:27017/pwtdb'
+
+app.config['UPLOAD_FOLDER'] = dir_path + '/uploads'
 app.config['ALLOWED_EXTENSIONS'] = set(['xlsx', 'xls'])
 app.config['MONGO_DBNAME'] = 'pwtdb'
-app.config['MONGO_URI'] = 'mongodb://localhost:27017/pwtdb'
+app.config['MONGO_URI'] = mongodb_uri
 app.config['MAIL_SERVER'] = 'smtp.sendgrid.net'
 app.config['MAIL_PORT'] = 25
 app.config['MAIL_USERNAME'] = 'kapeway'
@@ -196,4 +204,4 @@ def get_all_policy():
 
 
 if __name__ == '__main__':
-    app.run(debug=True,threaded=True)
+    app.run(debug=True,threaded=True,host='0.0.0.0', port=port)
